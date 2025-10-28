@@ -1,232 +1,100 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Security POC — Notification</title>
-  <meta name="description" content="Proof-of-Concept page: notification of available subdomain/resource — responsible use only." />
-  <style>
-    /* Minimal reset */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html,body { height: 100%; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(135deg,#0f172a 0%,#082032 45%,#071233 100%); color: #e6eef8; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-    .wrap {
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:32px;
-    }
-    .card {
-      width:100%;
-      max-width:920px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius:18px;
-      padding:28px;
-      box-shadow: 0 8px 40px rgba(2,6,23,0.7);
-      backdrop-filter: blur(8px);
-      overflow:hidden;
-      position:relative;
-    }
-    .hero {
-      display:flex;
-      gap:20px;
-      align-items:center;
-      margin-bottom:18px;
-    }
-    .logo {
-      width:84px;
-      height:84px;
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      font-size:24px;
-      color:#071633;
-      background: linear-gradient(135deg,#7dd3fc,#60a5fa);
-      box-shadow: 0 6px 18px rgba(96,165,250,0.12), inset 0 -4px 12px rgba(255,255,255,0.06);
-    }
-    h1 {
-      font-size:20px;
-      letter-spacing: -0.4px;
-      color: #f8fafc;
-      margin-bottom:6px;
-    }
-    .sub {
-      color: #b9d6f8;
-      font-size:13px;
-    }
-    .status {
-      margin-top:16px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .pill {
-      padding:8px 12px;
-      border-radius:999px;
-      font-size:13px;
-      background: rgba(255,255,255,0.03);
-      color:#bfe7ff;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .notice {
-      margin-top:18px;
-      padding:16px;
-      border-radius:12px;
-      background: linear-gradient(90deg, rgba(96,165,250,0.06), rgba(34,211,238,0.02));
-      border: 1px solid rgba(96,165,250,0.06);
-      color:#dff6ff;
-      line-height:1.45;
-      font-size:15px;
-    }
-    .grid {
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      gap:18px;
-      margin-top:20px;
-    }
-    @media (max-width:900px) { .grid { grid-template-columns: 1fr; } .logo { width:72px; height:72px; } }
-    .box {
-      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));
-      padding:16px;
-      border-radius:12px;
-      border: 1px solid rgba(255,255,255,0.02);
-      color:#cfeeff;
-      font-size:14px;
-    }
-    .box h3 {
-      margin-bottom:8px;
-      font-size:15px;
-      color:#f8fbff;
-    }
-    .contact {
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-top:8px;
-      font-size:14px;
-    }
-    .btn {
-      display:inline-block;
-      text-decoration:none;
-      padding:10px 14px;
-      border-radius:10px;
-      background: linear-gradient(90deg,#34d399,#06b6d4);
-      color:#042027;
-      font-weight:600;
-      box-shadow: 0 6px 18px rgba(6,95,77,0.08);
-      border: none;
-    }
-    .footer {
-      margin-top:18px;
-      font-size:12px;
-      color:#9ecff0;
-      opacity:0.9;
-    }
-    .remediation li { margin-bottom:8px; }
-    .tag {
-      position:absolute;
-      right:18px;
-      top:18px;
-      font-weight:700;
-      font-size:12px;
-      padding:8px 10px;
-      border-radius:10px;
-      background: rgba(255,255,255,0.03);
-      color:#bfe7ff;
-      border:1px solid rgba(255,255,255,0.02);
-    }
-    .animated-bg {
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background-image: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.06), transparent 8%),
-                        radial-gradient(circle at 80% 80%, rgba(96,165,250,0.04), transparent 12%);
-      mix-blend-mode: screen;
-      opacity:0.9;
-      filter: blur(36px);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subdomain Takeover PoC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Monaco', monospace;
+            background: #000;
+            color: #00aa00;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .terminal {
+            background: #000;
+            border: 1px solid #333;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .prompt {
+            color: #00aa00;
+            font-weight: bold;
+        }
+
+        .command {
+            color: #ffffff;
+        }
+
+        .output {
+            color: #00aa00;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        .main-message {
+            color: #00aa00;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 30px 0;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00aa00;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" role="main" aria-labelledby="title">
-      <div class="animated-bg" aria-hidden="true"></div>
-
-      <div class="hero">
-        <div class="logo" aria-hidden="true">POC</div>
-        <div>
-          <h1 id="title">Proof-of-Concept — Security Notification</h1>
-          <div class="sub">This page is a harmless evidence page deployed by an authorized security researcher.</div>
+    <div class="terminal">
+        <div class="line output">
+            [!] d0x was here
         </div>
-      </div>
-
-      <div class="status" aria-hidden="true">
-        <div class="pill">Type: Subdomain / External resource</div>
-        <div class="pill">State: POC — Non-destructive test</div>
-        <div class="pill">Priority: Please review</div>
-      </div>
-
-      <div class="notice" role="region" aria-label="Important notice">
-        <strong>Notice:</strong> This page was deployed only for security testing and responsible communication.
-        No data exfiltration or modification has been performed. If you are the owner/administrator, please contact the researcher to coordinate remediation.
-      </div>
-
-      <div class="grid">
-        <div class="box" aria-live="polite">
-          <h3>Test details</h3>
-          <p><strong>Observed host:</strong> <span id="domain">[subdomain.example.com]</span></p>
-          <p><strong>Date (UTC):</strong> <time id="date" datetime="">[2025-10-27]</time></p>
-
-          <h3 style="margin-top:12px">Researcher contact</h3>
-          <div class="contact">
-            <div><strong>Name:</strong> [Your name or handle]</div>
-            <div><strong>Email:</strong> <a href="mailto:security@example.com" style="color:#dff6ff">security@example.com</a></div>
-            <div><strong>Program / Bounty:</strong> [e.g. Bug Bounty — Program Name]</div>
-            <a class="btn" href="mailto:security@example.com?subject=POC%20Subdomain%20-%20[subdomain.example.com]">Contact</a>
-          </div>
-
-          <div class="footer">
-            This page is intended for authorized testing and evidence only. If you do not recognize this activity, please contact your security team.
-          </div>
+        
+        <div class="main-message">
+            YOUR SUBDOMAIN IS MINE NOW!
         </div>
-
-        <div class="box" aria-hidden="false">
-          <h3>Suggested remediation steps</h3>
-          <ul class="remediation">
-            <li>Check DNS records: remove CNAME/A records pointing to unused services.</li>
-            <li>Claim or delete resources at the provider (GitHub Pages, Heroku, S3, Azure, etc.).</li>
-            <li>Serve a default 404/410 or block responses for hostnames that should not be active.</li>
-            <li>Review TLS/SSL certificates and renew or correct certificates if needed.</li>
-            <li>Implement DNS-change monitoring and alerts for configuration drift.</li>
-          </ul>
-
-          <h3 style="margin-top:10px">License / Usage</h3>
-          <p style="font-size:13px;color:#cdeeff">Designed for <strong>responsible research</strong>. Do not use to manipulate or exploit third-party systems without permission.</p>
+        
+        <div class="line">
+            <span class="cursor"></span>
         </div>
-      </div>
-
-      <div class="tag">POC • Responsible</div>
+        
+        <div class="subtitle">
+            Proof of Concept
+        </div>
     </div>
-  </div>
-  <script>
-    // Insert dynamic date and optionally domain from query string (harmless)
-    (function(){
-      try {
-        const params = new URLSearchParams(location.search);
-        const domain = params.get('d') || document.getElementById('domain').textContent;
-        const dateEl = document.getElementById('date');
-        const now = new Date();
-        dateEl.textContent = now.toISOString().slice(0,10);
-        dateEl.setAttribute('datetime', now.toISOString());
-        if(domain && domain !== '[subdomain.example.com]') {
-          document.getElementById('domain').textContent = domain;
-        }
-      } catch(e){ /* silent */ }
-    })();
-  </script>
+
+    <script>
+        // Console messages
+        console.log('%c[!] SUBDOMAIN TAKEOVER DETECTED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        console.log('%cThis is a proof of concept for educational purposes.', 'color: #888; font-size: 12px;');
+    </script>
 </body>
 </html>
